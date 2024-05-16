@@ -1,214 +1,222 @@
 <template>
-    <v-container id="app">
-        <div class="doors">
-            <div class="door">
-                <div class="lottery-balls"></div>
-            </div>
-        </div>
-        <div class="buttons">
-            <v-btn :disabled="!selectedNumber" id="spinner" :onclick="spin"
-                >Spin</v-btn
-            >
-            <v-btn id="reseter" :onclick="init">Reset</v-btn>
-        </div>
-    </v-container>
-    <Selection :items="items" @on-lottery-ball-select="onLotteryBallSelect" />
-    <ResultModal :is-open="isCurrentRoundWin" />
+   <v-container id="app">
+      <div class="lottery-result">
+         <div class="lottery-balls"></div>
+      </div>
+   </v-container>
+   <Selection
+      :items="items"
+      :selected-number="selectedNumber"
+      :is-count-down-in-progress="props.isCountDownInProgress"
+      :balance="balance"
+      @on-lottery-ball-select="onLotteryBallSelect"
+   />
+   <Balance :balance="balance" />
+   <ResultModal :is-open="isCurrentRoundWin" />
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { getLotteryBallImage } from "../../utils";
 import Selection from "./Selection.vue";
 import ResultModal from "../ResultModal.vue";
+import Balance from "../Balance.vue";
+import gsap from "gsap";
 
-const selectedNumber = ref();
-const isCurrentRoundWin = ref(false);
+const selectedNumber = ref<number>(0);
+const isCurrentRoundWin = ref<boolean>(false);
+const balance = ref<number>(3);
 
 const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-const pool = [0];
+const pool: Array<number> = [];
 
-const doorRef = ref();
+const lotteryResult = ref();
+
+const emit = defineEmits(["startTimer"]);
+
+const props = defineProps({
+   isCountDownInProgress: { type: Boolean, required: true },
+});
+
+watch(
+   () => props.isCountDownInProgress,
+   (isCountDownInProgress) => {
+      if (!isCountDownInProgress) {
+         spin();
+      }
+   }
+);
 
 onMounted(() => {
-    doorRef.value = document.querySelector(".door") as HTMLDivElement;
+   lotteryResult.value = document.querySelector(
+      ".lottery-result"
+   ) as HTMLDivElement;
 
-    init();
+   emit("startTimer");
+   init();
 });
 
 function init(firstInit = true, groups = 10, duration = 10) {
-    const balls = document.querySelector(".lottery-balls") as HTMLDivElement;
+   const balls = document.querySelector(".lottery-balls") as HTMLDivElement;
 
-    if (firstInit) {
-        doorRef.value.dataset.spinned = "0";
-        pool.length = 0;
-        pool.push(0);
-    } else if (doorRef.value.dataset.spinned === "1") {
-        return;
-    }
+   lotteryResult.value.dataset.spinned = "0";
+   pool.length = 0;
 
-    const ballsClone = balls.cloneNode(false) as HTMLDivElement;
+   if (firstInit) {
+      const shuffledItems = gsap.utils.shuffle(items);
+      pool.push(shuffledItems.pop()!);
+   }
 
-    if (!firstInit) {
-        const arr = [];
-        for (let n = 0; n < (groups > 0 ? groups : 1); n++) {
-            arr.push(...items);
-        }
-        pool.push(...shuffle(arr));
-        console.log(pool);
-        ballsClone.addEventListener(
-            "transitionstart",
-            function () {
-                doorRef.value.dataset.spinned = "1";
-                const balls = this.querySelectorAll(
-                    ".box"
-                ) as NodeListOf<HTMLImageElement>;
-                balls.forEach((box) => {
-                    box.style.filter = "blur(1px)";
-                });
-            },
-            { once: true }
-        );
+   if (lotteryResult.value.dataset.spinned === "1") {
+      return;
+   }
 
-        ballsClone.addEventListener(
-            "transitionend",
-            function () {
-                const balls = this.querySelectorAll(
-                    ".box"
-                ) as NodeListOf<HTMLImageElement>;
-                balls.forEach((box, index) => {
-                    box.style.filter = "blur(0)";
-                    if (index > 0) this.removeChild(box);
-                });
-            },
-            { once: true }
-        );
-    }
+   const ballsClone = balls.cloneNode(false) as HTMLDivElement;
 
-    for (let i = pool.length - 1; i >= 0; i--) {
-        const box = document.createElement("img");
-        box.classList.add("box");
-        box.style.width = doorRef.value.clientWidth + "px";
-        box.style.height = doorRef.value.clientHeight + "px";
+   if (!firstInit) {
+      const arr = [];
+      for (let n = 0; n < (groups > 0 ? groups : 1); n++) {
+         arr.push(...items);
+      }
+      pool.push(...gsap.utils.shuffle(arr));
 
-        box.src = getLotteryBallImage(pool[i]);
-        ballsClone.appendChild(box);
-    }
-    ballsClone.style.transitionDuration = `${duration > 0 ? duration : 1}s`;
-    ballsClone.style.transform = `translateY(-${
-        doorRef.value.clientHeight * (pool.length - 1)
-    }px)`;
-    doorRef.value.replaceChild(ballsClone, balls);
+      ballsClone.addEventListener(
+         "transitionstart",
+         function () {
+            lotteryResult.value.dataset.spinned = "1";
+            const balls = this.querySelectorAll(
+               ".ball"
+            ) as NodeListOf<HTMLImageElement>;
+            balls.forEach((ball) => {
+               ball.style.filter = "blur(1px)";
+            });
+         },
+         { once: true }
+      );
+
+      ballsClone.addEventListener(
+         "transitionend",
+         function () {
+            const balls = this.querySelectorAll(
+               ".ball"
+            ) as NodeListOf<HTMLImageElement>;
+            balls.forEach((ball, index) => {
+               ball.style.filter = "blur(0)";
+               if (index > 0) this.removeChild(ball);
+            });
+         },
+         { once: true }
+      );
+   }
+
+   for (let i = pool.length - 1; i >= 0; i--) {
+      const ball = document.createElement("img");
+      ball.classList.add("ball");
+      ball.style.width = lotteryResult.value.clientWidth + "px";
+      ball.style.height = lotteryResult.value.clientHeight + "px";
+      ball.src = getLotteryBallImage(pool[i]);
+      ballsClone.appendChild(ball);
+   }
+   ballsClone.style.transitionDuration = `${duration > 0 ? duration : 1}s`;
+   ballsClone.style.transform = `translateY(-${
+      lotteryResult.value.clientHeight * (pool.length - 1)
+   }px)`;
+   lotteryResult.value.replaceChild(ballsClone, balls);
 }
 
-function shuffle([...arr]) {
-    let m = arr.length;
-    while (m) {
-        const i = Math.floor(Math.random() * m--);
-        [arr[m], arr[i]] = [arr[i], arr[m]];
-    }
-    return arr;
-}
 async function spin() {
-    const duration = 10;
-    if (selectedNumber.value) {
-        init(false, duration, 5);
+   const duration = 10;
+   init(false, duration, 5);
 
-        animate();
+   animate();
 
-        checkIsWin(duration);
-    }
+   checkIsWin(duration);
 }
 
 function animate() {
-    setTimeout(async () => {
-        const balls = doorRef.value.querySelector(
-            ".lottery-balls"
-        ) as HTMLDivElement;
-        if (balls) {
-            const duration = parseInt(balls.style.transitionDuration);
-            balls.style.transform = "translateY(0)";
-            await new Promise((resolve) => {
-                setTimeout(resolve, duration * 100);
-            });
-        }
-    }, 0);
+   setTimeout(async () => {
+      const balls = lotteryResult.value.querySelector(
+         ".lottery-balls"
+      ) as HTMLDivElement;
+      if (balls) {
+         const duration = parseInt(balls.style.transitionDuration);
+         balls.style.transform = "translateY(0)";
+         await new Promise((resolve) => {
+            setTimeout(resolve, duration * 100);
+         });
+      }
+   }, 50);
 }
 
 function checkIsWin(duration: number) {
-    setTimeout(() => {
-        const winnerNumber = pool.pop();
-        if (winnerNumber === selectedNumber.value) {
+   setTimeout(() => {
+      const winnerNumber = pool.pop();
+      if (selectedNumber.value) {
+         if (winnerNumber === selectedNumber.value) {
+            balance.value = balance.value + 2;
             isCurrentRoundWin.value = true;
-        } else {
+         } else {
+            balance.value = balance.value - 1;
+
             isCurrentRoundWin.value = false;
-        }
-    }, (duration / 2) * 1000);
+         }
+      }
+
+      const tl = gsap.timeline({
+         defaults: { duration: 0.5, ease: "linear" },
+      });
+      tl.to(`.ball-${winnerNumber}`, { y: "-2", rotate: -15 });
+      tl.to(`.ball-${winnerNumber}`, { y: "-2", rotate: +15 });
+      tl.to(`.ball-${winnerNumber}`, { y: "-2", rotate: -15 });
+      tl.to(`.ball-${winnerNumber}`, { y: "-2", rotate: +15 });
+      tl.to(`.ball-${winnerNumber}`, { y: "0", rotate: 0 });
+
+      setTimeout(() => {
+         reset();
+      }, (duration / 2) * 1000);
+   }, (duration / 2) * 1000);
 }
 
 function onLotteryBallSelect(selectedBall: number) {
-    selectedNumber.value = selectedBall;
-    console.log("onSelect", selectedBall);
+   selectedNumber.value = selectedBall;
+}
+
+function reset() {
+   //reset state
+   isCurrentRoundWin.value = false;
+   selectedNumber.value = 0;
+   emit("startTimer");
 }
 </script>
 
 <style scoped>
 #app {
-    width: 100%;
-    height: 100%;
-    background: #1a2b45;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+   width: 100%;
+   height: 100%;
+   background: #1a2b45;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
 }
 
-.doors {
-    display: flex;
-}
-
-.door {
-    width: 100px;
-    height: 100px;
-    overflow: hidden;
-    border-radius: 5px;
-    margin: 5px;
-    margin: 1rem;
+.lottery-result {
+   width: 100px;
+   height: 100px;
+   overflow: hidden;
+   border-radius: 0.5rem;
+   margin: 1rem;
 }
 
 .lottery-balls {
-    /* transform: translateY(0); */
-    transition: transform 1s ease-in-out;
+   transition: transform 1s ease-in-out;
 }
 
-.box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 3rem;
-    width: 100%;
-    height: 100;
-    background-position: "center";
-}
-
-.buttons {
-    margin: 1rem 0 2rem 0;
-}
-
-button {
-    cursor: pointer;
-    font-size: 1.2rem;
-    margin: 0 0.2rem;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
-}
-
-.info {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
+.ball {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   background-position: "center";
 }
 </style>
