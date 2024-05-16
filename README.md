@@ -1,5 +1,7 @@
 # quik-gaming-task
 
+Lottery drawer game with Vue 3, Typescript 5, Pixi 6 and GSAP
+
 ## Project setup
 
 ```
