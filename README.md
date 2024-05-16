@@ -1,6 +1,6 @@
 # quik-gaming-task
 
-Lottery drawer game with Vue 3, Typescript 5, Pixi 6 and GSAP
+Lottery machine game with Vue 3, Typescript 5, Pixi 6 and GSAP
 
 ## Project setup
 
@@ -8,10 +8,10 @@ Lottery drawer game with Vue 3, Typescript 5, Pixi 6 and GSAP
 yarn install
 ```
 
-### Compiles and hot-reloads for development
+### Starts local server and hot-reloads for development
 
 ```
-yarn serve
+yarn dev
 ```
 
 ### Compiles and minifies for production

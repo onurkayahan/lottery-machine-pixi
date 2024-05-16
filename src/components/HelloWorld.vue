@@ -6,7 +6,7 @@
                     :src="logo"
                     class="my-3"
                     contain
-                    height="200"
+                    height="100"
                     :onclick="openModal"
                 />
             </v-col>
@@ -82,9 +82,9 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
 import ResultModal from "./ResultModal.vue";
-import Game from "./Game.vue";
+import Game from "./game/Game.vue";
 
-const logo = new URL(`@/assets/logo.jpg`, import.meta.url).href;
+const logo = new URL(`@/assets/logo.png`, import.meta.url).href;
 
 const ecosystem = reactive([
     {

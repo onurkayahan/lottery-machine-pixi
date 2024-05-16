@@ -6,14 +6,24 @@
             </div>
         </div>
         <div class="buttons">
-            <v-btn id="spinner" :onclick="spin">Spin</v-btn>
+            <v-btn :disabled="!selectedNumber" id="spinner" :onclick="spin"
+                >Spin</v-btn
+            >
             <v-btn id="reseter" :onclick="init">Reset</v-btn>
         </div>
     </v-container>
+    <Selection :items="items" @on-lottery-ball-select="onLotteryBallSelect" />
+    <ResultModal :is-open="isCurrentRoundWin" />
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { getLotteryBallImage } from "../../utils";
+import Selection from "./Selection.vue";
+import ResultModal from "../ResultModal.vue";
+
+const selectedNumber = ref();
+const isCurrentRoundWin = ref(false);
 
 const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
@@ -101,8 +111,17 @@ function shuffle([...arr]) {
     return arr;
 }
 async function spin() {
-    init(false, 10, 5);
+    const duration = 10;
+    if (selectedNumber.value) {
+        init(false, duration, 5);
 
+        animate();
+
+        checkIsWin(duration);
+    }
+}
+
+function animate() {
     setTimeout(async () => {
         const balls = doorRef.value.querySelector(
             ".lottery-balls"
@@ -111,16 +130,26 @@ async function spin() {
             const duration = parseInt(balls.style.transitionDuration);
             balls.style.transform = "translateY(0)";
             await new Promise((resolve) => {
-                console.log(balls);
                 setTimeout(resolve, duration * 100);
             });
         }
     }, 0);
 }
 
-function getLotteryBallImage(value: number) {
-    return new URL(`../assets/lottery-balls/${value}.png`, import.meta.url)
-        .href;
+function checkIsWin(duration: number) {
+    setTimeout(() => {
+        const winnerNumber = pool.pop();
+        if (winnerNumber === selectedNumber.value) {
+            isCurrentRoundWin.value = true;
+        } else {
+            isCurrentRoundWin.value = false;
+        }
+    }, (duration / 2) * 1000);
+}
+
+function onLotteryBallSelect(selectedBall: number) {
+    selectedNumber.value = selectedBall;
+    console.log("onSelect", selectedBall);
 }
 </script>
 
