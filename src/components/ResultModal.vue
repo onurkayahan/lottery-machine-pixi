@@ -24,7 +24,7 @@ const renderPixi = () => {
             resizeTo: view,
         });
         document.body.appendChild(app.view);
-        let texture = PIXI.Texture.from("src/assets/logo.svg");
+        let texture = PIXI.Texture.from("../assets/logo.png");
         let sprite = new PIXI.Sprite(texture);
         app.stage.addChild(sprite);
     }
