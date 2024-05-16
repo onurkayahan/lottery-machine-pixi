@@ -1,29 +1,28 @@
 <template>
-    <v-app
-        id="main"
-        :style="{ background: $vuetify.theme.themes.dark.colors.background }"
-    >
-        <v-main>
-            <HelloWorld />
-        </v-main>
-    </v-app>
+   <v-app :style="{ background: $vuetify.theme.themes.dark.colors.background }">
+      <v-main id="main">
+         <Board />
+      </v-main>
+   </v-app>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import HelloWorld from "./components/HelloWorld.vue";
+import Board from "./components/Board.vue";
 
 export default defineComponent({
-    name: "App",
-
-    components: {
-        HelloWorld,
-    },
-
-    data() {
-        return {
-            //
-        };
-    },
+   name: "App",
+   components: {
+      Board,
+   },
 });
 </script>
+
+<style scoped>
+#main {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 0 4.5rem;
+}
+</style>
