@@ -23,4 +23,11 @@ p {
    font-size: 2rem;
    padding: 1rem;
 }
+
+@media (max-width: 1024px) {
+   p {
+      font-size: 1rem;
+      padding: 0.5rem;
+   }
+}
 </style>

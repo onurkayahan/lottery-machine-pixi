@@ -201,8 +201,8 @@ function reset() {
 }
 
 .lottery-result {
-   width: 100px;
-   height: 100px;
+   width: 6rem;
+   height: 6rem;
    overflow: hidden;
    border-radius: 0.5rem;
    margin: 1rem;
@@ -217,5 +217,12 @@ function reset() {
    justify-content: center;
    align-items: center;
    background-position: "center";
+}
+
+@media (max-width: 1024px) {
+   .lottery-result {
+      width: 4rem;
+      height: 4rem;
+   }
 }
 </style>

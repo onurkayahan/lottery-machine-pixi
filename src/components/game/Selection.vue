@@ -3,7 +3,6 @@
       <v-row justify="center">
          <v-col class="p-1" cols="auto" v-for="item in props.items" :key="item">
             <v-img
-               width="75"
                class="lottery-ball mt-3"
                :class="[`ball-${item}`, { selected: selected === item }]"
                :src="getLotteryBallImage(item)"
@@ -77,11 +76,21 @@ onMounted(() => {
 <style scoped>
 .container {
    max-height: 30vh;
-   overflow-y: scroll;
+   overflow-y: auto;
+}
+
+.lottery-ball {
+   width: 5rem;
 }
 
 .selected {
    border-radius: 50%;
    border: 0.25rem #1a2b45 dotted;
+}
+
+@media (max-width: 1024px) {
+   .lottery-ball {
+      width: 2.5rem;
+   }
 }
 </style>
