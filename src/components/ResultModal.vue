@@ -70,7 +70,7 @@ const renderPixi = () => {
       });
 
       const texture = PIXI.Texture.from(
-         new URL(`@/src/assets/you-win.png`, import.meta.url).href
+         new URL("../assets/you-win.png", import.meta.url).href
       );
       const sprite = new PIXI.Sprite(texture);
       const tl = gsap.timeline({ defaults: { duration: 0.25 } });
