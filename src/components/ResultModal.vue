@@ -52,7 +52,9 @@ const onMountCallback = () => {
 watch(view, (element: any, prevElement) => {
    if (element instanceof HTMLCanvasElement) {
       view.value = element;
-      if (onMountCallback && prevElement === undefined) onMountCallback();
+      if (onMountCallback && prevElement === undefined) {
+         onMountCallback();
+      }
    } else {
       view.value = undefined;
    }
@@ -67,7 +69,9 @@ const renderPixi = () => {
          transparent: true,
       });
 
-      const texture = PIXI.Texture.from("src/assets/you-win.png");
+      const texture = PIXI.Texture.from(
+         new URL("../assets/you-win.png", import.meta.url).href
+      );
       const sprite = new PIXI.Sprite(texture);
       const tl = gsap.timeline({ defaults: { duration: 0.25 } });
       tl.to(sprite, { pixi: { hue: 180 } })
