@@ -1,5 +1,5 @@
 <template>
-   <v-container class="bg-white">
+   <v-container class="container bg-white">
       <v-row justify="center">
          <v-col class="p-1" cols="auto" v-for="item in props.items" :key="item">
             <v-img
@@ -75,6 +75,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.container {
+   max-height: 40vh;
+   overflow: auto;
+}
+
 .selected {
    border-radius: 50%;
    border: 0.25rem #1a2b45 dotted;
