@@ -5,13 +5,7 @@
          @on-timer-end="handleTimerEnd"
       />
       <v-col cols="12">
-         <v-img
-            :src="logo"
-            class="my-3"
-            contain
-            height="100"
-            :onclick="openModal"
-         />
+         <v-img :src="logo" class="logo my-3" :onclick="openModal" />
       </v-col>
       <Game
          :is-count-down-in-progress="isCountDownInProgress"
@@ -43,3 +37,16 @@ function handleTimerEnd() {
    isCountDownInProgress.value = false;
 }
 </script>
+<style scoped>
+.logo {
+   height: 5rem;
+   background-position: "center center";
+   background-size: "contain";
+}
+
+@media (max-width: 1024px) {
+   .logo {
+      height: 3rem;
+   }
+}
+</style>
