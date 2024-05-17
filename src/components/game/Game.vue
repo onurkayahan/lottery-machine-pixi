@@ -27,7 +27,7 @@ const selectedNumber = ref<number>(0);
 const isCurrentRoundWin = ref<boolean>(false);
 const balance = ref<number>(3);
 
-const items = [1, 2];
+const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const pool: Array<number> = [];
 
