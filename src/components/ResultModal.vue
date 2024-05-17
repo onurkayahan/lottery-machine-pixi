@@ -50,9 +50,14 @@ const onMountCallback = () => {
 };
 
 watch(view, (element: any, prevElement) => {
+   console.log("view updated");
    if (element instanceof HTMLCanvasElement) {
+      console.log("element instanceof HTMLCanvasElement");
       view.value = element;
-      if (onMountCallback && prevElement === undefined) onMountCallback();
+      if (onMountCallback && prevElement === undefined) {
+         console.log("onMountCallback");
+         onMountCallback();
+      }
    } else {
       view.value = undefined;
    }
