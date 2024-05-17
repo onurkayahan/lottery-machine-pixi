@@ -77,7 +77,7 @@ onMounted(() => {
 <style scoped>
 .container {
    max-height: 30vh;
-   overflow-y: auto;
+   overflow-y: scroll;
 }
 
 .selected {
