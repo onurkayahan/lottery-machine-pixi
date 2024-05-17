@@ -50,12 +50,9 @@ const onMountCallback = () => {
 };
 
 watch(view, (element: any, prevElement) => {
-   console.log("view updated");
    if (element instanceof HTMLCanvasElement) {
-      console.log("element instanceof HTMLCanvasElement");
       view.value = element;
       if (onMountCallback && prevElement === undefined) {
-         console.log("onMountCallback");
          onMountCallback();
       }
    } else {
@@ -72,7 +69,9 @@ const renderPixi = () => {
          transparent: true,
       });
 
-      const texture = PIXI.Texture.from("src/assets/you-win.png");
+      const texture = PIXI.Texture.from(
+         new URL(`@/src/assets/you-win.png`, import.meta.url).href
+      );
       const sprite = new PIXI.Sprite(texture);
       const tl = gsap.timeline({ defaults: { duration: 0.25 } });
       tl.to(sprite, { pixi: { hue: 180 } })
