@@ -27,7 +27,7 @@ const selectedNumber = ref<number>(0);
 const isCurrentRoundWin = ref<boolean>(false);
 const balance = ref<number>(3);
 
-const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const items = [1, 2];
 
 const pool: Array<number> = [];
 
@@ -64,8 +64,7 @@ function init(firstInit = true, groups = 10, duration = 10) {
    pool.length = 0;
 
    if (firstInit) {
-      const shuffledItems = gsap.utils.shuffle(items);
-      pool.push(shuffledItems.pop()!);
+      pool.push(0);
    }
 
    if (lotteryResult.value.dataset.spinned === "1") {
@@ -146,7 +145,7 @@ function animate() {
             setTimeout(resolve, duration * 100);
          });
       }
-   }, 50);
+   }, 250);
 }
 
 function checkIsWin(duration: number) {
