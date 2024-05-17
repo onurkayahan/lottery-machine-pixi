@@ -95,7 +95,9 @@ export function getParticleEmitter(container: PIXI.ParticleContainer): Emitter {
          {
             type: "textureSingle",
             config: {
-               texture: PIXI.Texture.from("src/assets/confetti.png"),
+               texture: PIXI.Texture.from(
+                  new URL(`@/assets/confetti.png"`, import.meta.url).href
+               ),
             },
          },
       ],
