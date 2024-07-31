@@ -1,4 +1,4 @@
-# quik-gaming-task
+# lottery-machine-pixi
 
 Lottery machine game with Vue 3, Typescript 5, Pixi 6 and GSAP
 
